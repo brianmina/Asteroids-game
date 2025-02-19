@@ -1,12 +1,16 @@
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_SHOOT_SPEED
+from asteroid import Shot
+
 
 class Player(CircleShape):
     containers = None
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.shots = []
+        self.angle = 0
 
         if Player.containers:
             for group in Player.containers:
@@ -44,3 +48,16 @@ class Player(CircleShape):
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
+
+    def shoot(self):
+        # Create a new Shot at the Player's current position
+        shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
+        # Set initial velocity (use a vector pointing upward and rotate it by player's angle)
+        velocity = pygame.Vector2(0, -1)  # Starts pointing upwards
+        velocity = velocity.rotate(self.angle)
+        velocity = velocity * PLAYER_SHOOT_SPEED  # Scale it by shot speed
+
+        shot.velocity = velocity
+
+        # Add the shot to a group (like `shots` list or sprite group)
+        self.shots.append(shot)
