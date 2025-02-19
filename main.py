@@ -32,7 +32,14 @@ def main():
                 sys.exit()
         dt = clock.tick(60) / 1000
         updatable.update(dt)
-            
+        
+
+        for asteroid in asteroids:
+            if asteroid.collides_with(player):
+                print("Game Over")
+                sys.exit()
+
+
         screen.fill((0, 0, 0))
         for sprite in drawable:
             sprite.draw(screen)
