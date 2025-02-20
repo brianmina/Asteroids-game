@@ -1,7 +1,7 @@
 import pygame
 from circleshape import CircleShape
 from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_SHOOT_SPEED
-from asteroid import Shot
+from shot import Shot
 
 
 class Player(CircleShape):
@@ -33,7 +33,7 @@ class Player(CircleShape):
         self.rotation += PLAYER_TURN_SPEED * dt
 
     
-    def update(self, dt):
+    def update(self, dt, shots_group):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -44,12 +44,14 @@ class Player(CircleShape):
             self.move(dt)
         if keys[pygame.K_s]:
             self.move(-dt)
-    
+        if keys[pygame.K_SPACE]:
+            self.shoot(shots_group)
+
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
 
-    def shoot(self):
+    def shoot(self, shots_group):
         # Create a new Shot at the Player's current position
         shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
         # Set initial velocity (use a vector pointing upward and rotate it by player's angle)
