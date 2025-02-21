@@ -10,7 +10,6 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shots = []
-        self.angle = 0
 
         if Player.containers:
             for group in Player.containers:
@@ -56,10 +55,11 @@ class Player(CircleShape):
         shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
         # Set initial velocity (use a vector pointing upward and rotate it by player's angle)
         velocity = pygame.Vector2(0, -1)  # Starts pointing upwards
-        velocity = velocity.rotate(self.angle)
+        velocity = velocity.rotate(self.rotation)
         velocity = velocity * PLAYER_SHOOT_SPEED  # Scale it by shot speed
 
         shot.velocity = velocity
 
         # Add the shot to a group (like `shots` list or sprite group)
         self.shots.append(shot)
+        print(f"Player angle: {self.angle}, Velocity after rotation: {velocity}")
