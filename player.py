@@ -1,6 +1,6 @@
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_SHOOT_SPEED
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN
 from shot import Shot
 
 
@@ -10,7 +10,7 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shots = []
-
+        self.shoot_timer = 0
         if Player.containers:
             for group in Player.containers:
                 group.add(self)
@@ -35,6 +35,12 @@ class Player(CircleShape):
     def update(self, dt, shots_group):
         keys = pygame.key.get_pressed()
 
+        if self.shoot_timer > 0 :
+            self.shoot_timer -= dt
+        
+        if self.shoot_timer < 0 :
+            self.shoot_timer = 0
+
         if keys[pygame.K_a]:
             self.rotate(-dt)
         if keys[pygame.K_d]:
@@ -51,8 +57,16 @@ class Player(CircleShape):
         self.position += forward * PLAYER_SPEED * dt
 
     def shoot(self, shots_group):
-        # Create a new Shot at the Player's current position
+
+        if  self.shoot_timer > 0 : 
+            return
+
+         # Create a new Shot at the Player's current position
         shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
+
+        
+        self.shoot_timer =  PLAYER_SHOOT_COOLDOWN
+
         # Set initial velocity (use a vector pointing upward and rotate it by player's angle)
         velocity = pygame.Vector2(0, -1)  # Starts pointing upwards
         velocity = velocity.rotate(self.rotation)
@@ -61,5 +75,5 @@ class Player(CircleShape):
         shot.velocity = velocity
 
         # Add the shot to a group (like `shots` list or sprite group)
-        self.shots.append(shot)
-        print(f"Player angle: {self.angle}, Velocity after rotation: {velocity}")
+        self.shots.append(shot)   
+        
