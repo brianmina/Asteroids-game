@@ -17,7 +17,7 @@ class Player(CircleShape):
 
 
     def triangle(self):
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        forward = pygame.Vector2(0, -1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
         a = self.position + forward * self.radius
         b = self.position - forward * self.radius - right
@@ -60,18 +60,20 @@ class Player(CircleShape):
 
         if  self.shoot_timer > 0 : 
             return
+        
 
-         # Create a new Shot at the Player's current position
+        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        tip_position = self.position - forward * self.radius
+        
+        # Create a new Shot at the Player's current position
         shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
 
         
         self.shoot_timer =  PLAYER_SHOOT_COOLDOWN
 
         # Set initial velocity (use a vector pointing upward and rotate it by player's angle)
-        velocity = pygame.Vector2(0, -1)  # Starts pointing upwards
-        velocity = velocity.rotate(self.rotation)
-        velocity = velocity * PLAYER_SHOOT_SPEED  # Scale it by shot speed
-
+        velocity = -forward * PLAYER_SHOOT_SPEED 
+        
         shot.velocity = velocity
 
         # Add the shot to a group (like `shots` list or sprite group)
